@@ -1,0 +1,138 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+.container{
+    width:90%;
+    max-width:700px;
+    margin:40px auto;
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 0 10px rgba(0,0,0,0.15);
+}
+
+h1{
+    text-align:center;
+    color:#1f4e79;
+    margin-bottom:20px;
+}
+
+h2{
+    margin-top:20px;
+    color:#333;
+}
+
+p{
+    text-align:center;
+    margin-bottom:20px;
+    color:#555;
+}
+
+ul{
+    margin-left:25px;
+    margin-top:10px;
+}
+
+li{
+    margin-bottom:10px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    margin-bottom:15px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#007bff;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+a{
+    text-decoration:none;
+}
+
+.dashboard button{
+    margin-bottom:15px;
+}
+
+.chat-box{
+    height:400px;
+    overflow-y:auto;
+    border:1px solid #ddd;
+    padding:15px;
+    background:#fafafa;
+    border-radius:8px;
+    margin-bottom:20px;
+}
+
+.user{
+    text-align:right;
+    margin:10px;
+    color:#0d6efd;
+    font-weight:bold;
+}
+
+.bot{
+    text-align:left;
+    margin:10px;
+    color:#198754;
+    font-weight:bold;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+table,th,td{
+    border:1px solid #ccc;
+}
+
+th{
+    background:#007bff;
+    color:white;
+    padding:10px;
+}
+
+td{
+    padding:10px;
+    text-align:center;
+}
+
+.card{
+    background:#f8f9fa;
+    padding:15px;
+    margin:10px 0;
+    border-left:5px solid #007bff;
+    border-radius:6px;
+}
+
+.footer{
+    text-align:center;
+    margin-top:20px;
+    color:#666;
+    font-size:14px;
+}
