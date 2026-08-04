@@ -1,16 +1,18 @@
+
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
 
 app = Flask(__name__)
 app.secret_key = "college_chatbot_secret"
 
-# Database Connection
+# ---------------- DATABASE ---------------- #
+
 def get_db():
     conn = sqlite3.connect("chatbot.db")
     conn.row_factory = sqlite3.Row
     return conn
 
-# Create Tables
+
 def create_tables():
     conn = get_db()
     cur = conn.cursor()
@@ -24,43 +26,26 @@ def create_tables():
     )
     """)
 
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS notices(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT,
-        description TEXT
-    )
-    """)
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS assignments(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        subject TEXT,
-        due_date TEXT
-    )
-    """)
-
     conn.commit()
     conn.close()
 
+
 create_tables()
 
-# Home
+# ---------------- HOME ---------------- #
+
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# Register Page
+
+# ---------------- REGISTER ---------------- #
+
 @app.route("/register")
 def register():
     return render_template("register.html")
 
-# Login Page
-@app.route("/login")
-def login():
-    return render_template("login.html")
 
-# Register Student
 @app.route("/register_student", methods=["POST"])
 def register_student():
 
@@ -78,13 +63,20 @@ def register_student():
         )
         conn.commit()
     except:
-        return "Email already exists"
+        return "Email already exists."
 
     conn.close()
 
     return redirect("/login")
 
-# Login Student
+
+# ---------------- LOGIN ---------------- #
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+
 @app.route("/login_student", methods=["POST"])
 def login_student():
 
@@ -109,7 +101,9 @@ def login_student():
 
     return "Invalid Email or Password"
 
-# Dashboard
+
+# ---------------- DASHBOARD ---------------- #
+
 @app.route("/dashboard")
 def dashboard():
 
@@ -118,7 +112,9 @@ def dashboard():
 
     return render_template("dashboard.html", user=session["user"])
 
-# Chatbot
+
+# ---------------- CHATBOT ---------------- #
+
 @app.route("/chatbot")
 def chatbot():
 
@@ -126,6 +122,7 @@ def chatbot():
         return redirect("/login")
 
     return render_template("chatbot.html")
+
 
 @app.route("/get_reply", methods=["POST"])
 def get_reply():
@@ -138,18 +135,53 @@ def get_reply():
         "result": "Your result is First Class.",
         "fees": "Semester fees are ₹25,000.",
         "exam": "Your next exam starts on 20 September.",
+        "assignment": "You have 4 pending assignments.",
+        "notice": "Check the Notice Board for the latest updates.",
         "bye": "Goodbye! Have a nice day."
     }
 
-    reply = replies.get(message, "Sorry, I don't understand.")
+    reply = replies.get(message, "Sorry, I don't understand your question.")
 
     return {"reply": reply}
 
-# Logout
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/")
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# ---------------- ATTENDANCE ---------------- #
+
+@app.route("/attendance")
+def attendance():
+
+    if "user" not in session:
+        return redirect("/login")
+
+    return render_template("attendance.html")
+
+
+# ---------------- RESULTS ---------------- #
+
+@app.route("/results")
+def results():
+
+    if "user" not in session:
+        return redirect("/login")
+
+    return render_template("results.html")
+
+
+# ---------------- ASSIGNMENTS ---------------- #
+
+@app.route("/assignments")
+def assignments():
+
+    if "user" not in session:
+        return redirect("/login")
+
+    return render_template("assignments.html")
+
+
+# ---------------- NOTICES ---------------- #
+
+@app.route("/notices")
+def notices():
+
+    if "user" not in session:
+        return
