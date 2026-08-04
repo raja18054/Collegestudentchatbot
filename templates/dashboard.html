@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Welcome, {{ user }} 👋</h1>
+
+    <p>Select a feature below:</p>
+
+    <div class="dashboard">
+
+        <a href="/chatbot">
+            <button>💬 AI Chatbot</button>
+        </a>
+
+        <br><br>
+
+        <a href="/attendance">
+            <button>📅 Attendance</button>
+        </a>
+
+        <br><br>
+
+        <a href="/results">
+            <button>📊 Results</button>
+        </a>
+
+        <br><br>
+
+        <a href="/assignments">
+            <button>📝 Assignments</button>
+        </a>
+
+        <br><br>
+
+        <a href="/notices">
+            <button>📢 Notice Board</button>
+        </a>
+
+        <br><br>
+
+        <a href="/logout">
+            <button>🚪 Logout</button>
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>
