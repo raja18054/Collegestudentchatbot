@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>College AI Chatbot</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+.chat-box{
+height:400px;
+border:1px solid #ccc;
+padding:15px;
+overflow-y:auto;
+margin-bottom:15px;
+background:#f8f8f8;
+}
+
+.user{
+text-align:right;
+color:blue;
+margin:10px;
+}
+
+.bot{
+text-align:left;
+color:green;
+margin:10px;
+}
+
+input{
+width:75%;
+padding:10px;
+}
+
+button{
+padding:10px 20px;
+cursor:pointer;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>🤖 College Student Assistant Chatbot</h1>
+
+<div class="chat-box" id="chatBox">
+
+<div class="bot">
+Hello 👋<br>
+Ask me about:
+<ul>
+<li>Attendance</li>
+<li>Result</li>
+<li>Fees</li>
+<li>Exam</li>
+</ul>
+</div>
+
+</div>
+
+<input
+type="text"
+id="message"
+placeholder="Type your question..."
+>
+
+<button onclick="sendMessage()">Send</button>
+
+<br><br>
+
+<a href="/dashboard">
+<button>⬅ Dashboard</button>
+</a>
+
+</div>
+
+<script>
+
+function sendMessage(){
+
+let message=document.getElementById("message").value;
+
+if(message=="") return;
+
+let chat=document.getElementById("chatBox");
+
+chat.innerHTML += "<div class='user'>"+message+"</div>";
+
+fetch("/get_reply",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/x-www-form-urlencoded"
+},
+
+body:"message="+encodeURIComponent(message)
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+chat.innerHTML += "<div class='bot'>"+data.reply+"</div>";
+
+document.getElementById("message").value="";
+
+chat.scrollTop=chat.scrollHeight;
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
