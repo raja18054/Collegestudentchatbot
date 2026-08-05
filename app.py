@@ -6,6 +6,9 @@ import google.generativeai as genai
 app = Flask(__name__)
 app.secret_key = "college_chatbot_secret"
 
+# Configure Gemini API key (Make sure to set this environment variable on Render)
+genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
+
 # ---------------- DATABASE ---------------- #
 
 def get_db():
@@ -49,7 +52,6 @@ def register():
 
 @app.route("/register_student", methods=["POST"])
 def register_student():
-
     name = request.form["name"]
     email = request.form["email"]
     password = request.form["password"]
@@ -63,28 +65,28 @@ def register_student():
             (name, email, password)
         )
         conn.commit()
-    except:
+    except Exception:
         conn.close()
         return "Email already exists."
 
     conn.close()
-
     return redirect("/login")
 
 
-# ---------------- LOGIN ---------------- #
+# ---------------- LOGIN & AUTH ---------------- #
 
 @app.route("/login")
 def login():
     return render_template("login.html")
-    @app.route("/forgot_password")
+
+
+@app.route("/forgot_password")
 def forgot_password():
     return render_template("forgot_password.html")
 
 
 @app.route("/login_student", methods=["POST"])
 def login_student():
-
     email = request.form["email"]
     password = request.form["password"]
 
@@ -97,7 +99,6 @@ def login_student():
     )
 
     user = cur.fetchone()
-
     conn.close()
 
     if user:
@@ -105,9 +106,10 @@ def login_student():
         return redirect("/dashboard")
 
     return "Invalid Email or Password"
-    @app.route("/reset_password", methods=["POST"])
-   def reset_password():
 
+
+@app.route("/reset_password", methods=["POST"])
+def reset_password():
     email = request.form["email"]
     new_password = request.form["password"]
 
@@ -122,19 +124,15 @@ def login_student():
     user = cur.fetchone()
 
     if user:
-
         cur.execute(
             "UPDATE students SET password=? WHERE email=?",
             (new_password, email)
         )
-
         conn.commit()
         conn.close()
-
         return redirect("/login")
 
     conn.close()
-
     return "Email not found."
 
 
@@ -142,7 +140,6 @@ def login_student():
 
 @app.route("/dashboard")
 def dashboard():
-
     if "user" not in session:
         return redirect("/login")
 
@@ -153,7 +150,6 @@ def dashboard():
 
 @app.route("/chatbot")
 def chatbot():
-
     if "user" not in session:
         return redirect("/login")
 
@@ -162,7 +158,6 @@ def chatbot():
 
 @app.route("/get_reply", methods=["POST"])
 def get_reply():
-
     if "user" not in session:
         return {"reply": "Please login first."}
 
@@ -186,15 +181,18 @@ Student Question:
 {message}
 """
 
+    try:
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response = model.generate_content(prompt)
+        return {"reply": response.text}
     except Exception:
-    return {
-        "reply": "Sorry, AI is currently unavailable."
-    }
+        return {"reply": "Sorry, AI is currently unavailable."}
+
+
 # ---------------- ATTENDANCE ---------------- #
 
 @app.route("/attendance")
 def attendance():
-
     if "user" not in session:
         return redirect("/login")
 
@@ -205,7 +203,6 @@ def attendance():
 
 @app.route("/results")
 def results():
-
     if "user" not in session:
         return redirect("/login")
 
@@ -216,7 +213,6 @@ def results():
 
 @app.route("/assignments")
 def assignments():
-
     if "user" not in session:
         return redirect("/login")
 
@@ -227,7 +223,6 @@ def assignments():
 
 @app.route("/notices")
 def notices():
-
     if "user" not in session:
         return redirect("/login")
 
@@ -238,14 +233,11 @@ def notices():
 
 @app.route("/students")
 def students():
-
     conn = get_db()
     cur = conn.cursor()
 
     cur.execute("SELECT * FROM students")
-
     data = cur.fetchall()
-
     conn.close()
 
     return str([dict(row) for row in data])
@@ -255,9 +247,7 @@ def students():
 
 @app.route("/logout")
 def logout():
-
     session.clear()
-
     return redirect("/")
 
 
@@ -265,3 +255,4 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
