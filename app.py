@@ -152,14 +152,10 @@ Student Question:
 {message}
 """
 
-    try:
-        response = model.generate_content(prompt)
-        return {"reply": response.text}
-
     except Exception:
-        return {
-            "reply": "Sorry, AI is currently unavailable."
-        }
+    return {
+        "reply": "Sorry, AI is currently unavailable."
+    }
 # ---------------- ATTENDANCE ---------------- #
 
 @app.route("/attendance")
