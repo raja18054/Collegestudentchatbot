@@ -1,5 +1,4 @@
-
-    from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
 import os
 import google.generativeai as genai
