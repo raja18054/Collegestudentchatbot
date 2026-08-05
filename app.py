@@ -1,18 +1,20 @@
-from flask import Flask, render_template, request, redirect, session
-import sqlite3
 import os
-import google.generativeai as genai
+import sqlite3
+from flask import Flask, render_template, request, redirect, session
+from google import genai
+from google.genai.errors import APIError
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "college_chatbot_secret")
 
 # ---------------- GEMINI SETUP ---------------- #
-api_key = os.environ.get("GEMINI_API_KEY")
-
-if api_key:
-    genai.configure(api_key=api_key)
-else:
-    print("WARNING: GEMINI_API_KEY environment variable is missing!")
+# Initialize the Gemini client using the official google-genai SDK.
+# It automatically picks up GEMINI_API_KEY from environment variables.
+def get_gemini_client():
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return None
+    return genai.Client(api_key=api_key)
 
 # ---------------- DATABASE ---------------- #
 
@@ -160,6 +162,10 @@ def get_reply():
     if not message.strip():
         return {"reply": "Please enter a valid message."}
 
+    client = get_gemini_client()
+    if not client:
+        return {"reply": "Error: GEMINI_API_KEY environment variable is not configured on Render."}
+
     prompt = f"""
 You are a helpful College Student Assistant.
 
@@ -179,18 +185,22 @@ Student Question:
 """
 
     try:
-        # Use gemini-2.5-flash or gemini-1.5-flash
-        model = genai.GenerativeModel("gemini-2.5-flash")
-        response = model.generate_content(prompt)
+        # Generate response using gemini-2.5-flash
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+        )
         
-        if response and hasattr(response, 'text'):
+        if response and response.text:
             return {"reply": response.text}
         else:
             return {"reply": "Sorry, could not generate a response."}
 
-    except Exception as e:
-        # Print actual error to Render logs for debugging
+    except APIError as e:
         print(f"Gemini API Error: {e}")
+        return {"reply": f"Gemini API Error: {e.message}"}
+    except Exception as e:
+        print(f"Unexpected Error: {e}")
         return {"reply": f"Sorry, AI is currently unavailable. Error: {str(e)}"}
 
 # ---------------- ATTENDANCE / RESULTS / ASSIGNMENTS / NOTICES ---------------- #
