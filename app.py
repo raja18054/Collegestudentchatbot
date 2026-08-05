@@ -1,13 +1,19 @@
-from flask import Flask, render_template, request, redirect, session
+
+    from flask import Flask, render_template, request, redirect, session
 import sqlite3
 import os
 import google.generativeai as genai
 
 app = Flask(__name__)
-app.secret_key = "college_chatbot_secret"
+app.secret_key = os.environ.get("SECRET_KEY", "college_chatbot_secret")
 
-# Configure Gemini API key (Make sure to set this environment variable on Render)
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
+# ---------------- GEMINI SETUP ---------------- #
+api_key = os.environ.get("GEMINI_API_KEY")
+
+if api_key:
+    genai.configure(api_key=api_key)
+else:
+    print("WARNING: GEMINI_API_KEY environment variable is missing!")
 
 # ---------------- DATABASE ---------------- #
 
@@ -15,7 +21,6 @@ def get_db():
     conn = sqlite3.connect("chatbot.db")
     conn.row_factory = sqlite3.Row
     return conn
-
 
 def create_tables():
     conn = get_db()
@@ -33,7 +38,6 @@ def create_tables():
     conn.commit()
     conn.close()
 
-
 create_tables()
 
 # ---------------- HOME ---------------- #
@@ -42,13 +46,11 @@ create_tables()
 def home():
     return render_template("index.html")
 
-
 # ---------------- REGISTER ---------------- #
 
 @app.route("/register")
 def register():
     return render_template("register.html")
-
 
 @app.route("/register_student", methods=["POST"])
 def register_student():
@@ -72,18 +74,15 @@ def register_student():
     conn.close()
     return redirect("/login")
 
-
 # ---------------- LOGIN & AUTH ---------------- #
 
 @app.route("/login")
 def login():
     return render_template("login.html")
 
-
 @app.route("/forgot_password")
 def forgot_password():
     return render_template("forgot_password.html")
-
 
 @app.route("/login_student", methods=["POST"])
 def login_student():
@@ -106,7 +105,6 @@ def login_student():
         return redirect("/dashboard")
 
     return "Invalid Email or Password"
-
 
 @app.route("/reset_password", methods=["POST"])
 def reset_password():
@@ -135,7 +133,6 @@ def reset_password():
     conn.close()
     return "Email not found."
 
-
 # ---------------- DASHBOARD ---------------- #
 
 @app.route("/dashboard")
@@ -144,7 +141,6 @@ def dashboard():
         return redirect("/login")
 
     return render_template("dashboard.html", user=session["user"])
-
 
 # ---------------- CHATBOT ---------------- #
 
@@ -155,13 +151,15 @@ def chatbot():
 
     return render_template("chatbot.html")
 
-
 @app.route("/get_reply", methods=["POST"])
 def get_reply():
     if "user" not in session:
         return {"reply": "Please login first."}
 
-    message = request.form["message"]
+    message = request.form.get("message", "")
+
+    if not message.strip():
+        return {"reply": "Please enter a valid message."}
 
     prompt = f"""
 You are a helpful College Student Assistant.
@@ -182,52 +180,45 @@ Student Question:
 """
 
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        # Use gemini-2.5-flash or gemini-1.5-flash
+        model = genai.GenerativeModel("gemini-2.5-flash")
         response = model.generate_content(prompt)
-        return {"reply": response.text}
-    except Exception:
-        return {"reply": "Sorry, AI is currently unavailable."}
+        
+        if response and hasattr(response, 'text'):
+            return {"reply": response.text}
+        else:
+            return {"reply": "Sorry, could not generate a response."}
 
+    except Exception as e:
+        # Print actual error to Render logs for debugging
+        print(f"Gemini API Error: {e}")
+        return {"reply": f"Sorry, AI is currently unavailable. Error: {str(e)}"}
 
-# ---------------- ATTENDANCE ---------------- #
+# ---------------- ATTENDANCE / RESULTS / ASSIGNMENTS / NOTICES ---------------- #
 
 @app.route("/attendance")
 def attendance():
     if "user" not in session:
         return redirect("/login")
-
     return render_template("attendance.html")
-
-
-# ---------------- RESULTS ---------------- #
 
 @app.route("/results")
 def results():
     if "user" not in session:
         return redirect("/login")
-
     return render_template("results.html")
-
-
-# ---------------- ASSIGNMENTS ---------------- #
 
 @app.route("/assignments")
 def assignments():
     if "user" not in session:
         return redirect("/login")
-
     return render_template("assignments.html")
-
-
-# ---------------- NOTICES ---------------- #
 
 @app.route("/notices")
 def notices():
     if "user" not in session:
         return redirect("/login")
-
     return render_template("notices.html")
-
 
 # ---------------- VIEW STUDENTS (TESTING ONLY) ---------------- #
 
@@ -242,7 +233,6 @@ def students():
 
     return str([dict(row) for row in data])
 
-
 # ---------------- LOGOUT ---------------- #
 
 @app.route("/logout")
@@ -250,9 +240,7 @@ def logout():
     session.clear()
     return redirect("/")
 
-
 # ---------------- RUN ---------------- #
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
