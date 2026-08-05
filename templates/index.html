@@ -1,50 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Student Assistant Chatbot</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>College Student Assistant</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+
+background:linear-gradient(-45deg,#1e3c72,#2a5298,#00c9ff,#92fe9d);
+background-size:400% 400%;
+animation:bg 15s ease infinite;
+overflow-x:hidden;
+
+}
+
+@keyframes bg{
+
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+
+}
+
+nav{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:25px 10%;
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(15px);
+
+}
+
+.logo{
+
+font-size:28px;
+font-weight:bold;
+color:white;
+
+}
+
+nav a{
+
+color:white;
+text-decoration:none;
+margin-left:20px;
+font-size:18px;
+
+}
+
+.hero{
+
+height:80vh;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+flex-direction:column;
+
+text-align:center;
+
+color:white;
+
+}
+
+.hero h1{
+
+font-size:60px;
+margin-bottom:20px;
+animation:fade 1s;
+
+}
+
+.hero p{
+
+font-size:22px;
+margin-bottom:40px;
+max-width:700px;
+
+}
+
+@keyframes fade{
+
+from{
+
+opacity:0;
+transform:translateY(40px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateY(0);
+
+}
+
+}
+
+.btn{
+
+padding:15px 40px;
+
+background:white;
+
+color:#0066ff;
+
+border-radius:40px;
+
+text-decoration:none;
+
+font-size:20px;
+
+margin:10px;
+
+transition:.4s;
+
+display:inline-block;
+
+}
+
+.btn:hover{
+
+transform:translateY(-5px);
+box-shadow:0 10px 30px rgba(0,0,0,.3);
+
+}
+
+.features{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+gap:30px;
+
+padding:80px 10%;
+
+}
+
+.card{
+
+background:rgba(255,255,255,.18);
+
+backdrop-filter:blur(18px);
+
+border-radius:20px;
+
+padding:30px;
+
+text-align:center;
+
+color:white;
+
+transition:.4s;
+
+}
+
+.card:hover{
+
+transform:translateY(-10px);
+
+}
+
+.card i{
+
+font-size:55px;
+
+margin-bottom:20px;
+
+}
+
+footer{
+
+padding:30px;
+
+text-align:center;
+
+color:white;
+
+font-size:18px;
+
+}
+
+</style>
+
 </head>
 
 <body>
 
-<div class="container">
+<nav>
 
-    <h1>🎓 College Student Assistant Chatbot</h1>
+<div class="logo">
 
-    <p>
-        Welcome to the College Student Assistant Portal.
-    </p>
-
-    <div class="buttons">
-
-        <a href="/login">
-            <button>Login</button>
-        </a>
-
-        <a href="/register">
-            <button>Register</button>
-        </a>
-
-    </div>
-
-    <hr>
-
-    <h2>Features</h2>
-
-    <ul>
-        <li>✅ Student Login</li>
-        <li>✅ Student Registration</li>
-        <li>✅ AI Chatbot</li>
-        <li>✅ Attendance</li>
-        <li>✅ Results</li>
-        <li>✅ Notices</li>
-        <li>✅ Assignments</li>
-    </ul>
+🎓 Student Assistant
 
 </div>
 
+<div>
+
+<a href="/login">Login</a>
+
+<a href="/register">Register</a>
+
+</div>
+
+</nav>
+
+<section class="hero">
+
+<h1>College Student Assistant</h1>
+
+<p>
+
+A modern student portal built using Flask, SQLite and AI to help students manage attendance, assignments, results and notices.
+
+</p>
+
+<div>
+
+<a class="btn" href="/login">
+
+Login
+
+</a>
+
+<a class="btn" href="/register">
+
+Register
+
+</a>
+
+</div>
+
+</section>
+
+<section class="features">
+
+<div class="card">
+
+<i class="fas fa-robot"></i>
+
+<h2>AI Chatbot</h2>
+
+<p>Ask questions instantly.</p>
+
+</div>
+
+<div class="card">
+
+<i class="fas fa-chart-line"></i>
+
+<h2>Results</h2>
+
+<p>View semester results.</p>
+
+</div>
+
+<div class="card">
+
+<i class="fas fa-user-check"></i>
+
+<h2>Attendance</h2>
+
+<p>Track attendance easily.</p>
+
+</div>
+
+<div class="card">
+
+<i class="fas fa-book"></i>
+
+<h2>Assignments</h2>
+
+<p>Manage assignments online.</p>
+
+</div>
+
+<div class="card">
+
+<i class="fas fa-bullhorn"></i>
+
+<h2>Notice Board</h2>
+
+<p>Latest college announcements.</p>
+
+</div>
+
+<div class="card">
+
+<i class="fas fa-lock"></i>
+
+<h2>Secure Login</h2>
+
+<p>Protected student accounts.</p>
+
+</div>
+
+</section>
+
+<footer>
+
+Made with ❤️ using Python Flask • SQLite • HTML • CSS • JavaScript
+
+</footer>
+
 </body>
+
 </html>
