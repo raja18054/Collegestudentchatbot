@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
 
@@ -63,6 +62,7 @@ def register_student():
         )
         conn.commit()
     except:
+        conn.close()
         return "Email already exists."
 
     conn.close()
@@ -184,4 +184,39 @@ def assignments():
 def notices():
 
     if "user" not in session:
-        return
+        return redirect("/login")
+
+    return render_template("notices.html")
+
+
+# ---------------- VIEW STUDENTS (TESTING ONLY) ---------------- #
+
+@app.route("/students")
+def students():
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM students")
+
+    data = cur.fetchall()
+
+    conn.close()
+
+    return str([dict(row) for row in data])
+
+
+# ---------------- LOGOUT ---------------- #
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/")
+
+
+# ---------------- RUN ---------------- #
+
+if __name__ == "__main__":
+    app.run(debug=True)
