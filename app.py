@@ -77,6 +77,9 @@ def register_student():
 @app.route("/login")
 def login():
     return render_template("login.html")
+    @app.route("/forgot_password")
+def forgot_password():
+    return render_template("forgot_password.html")
 
 
 @app.route("/login_student", methods=["POST"])
@@ -102,6 +105,37 @@ def login_student():
         return redirect("/dashboard")
 
     return "Invalid Email or Password"
+    @app.route("/reset_password", methods=["POST"])
+   def reset_password():
+
+    email = request.form["email"]
+    new_password = request.form["password"]
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT * FROM students WHERE email=?",
+        (email,)
+    )
+
+    user = cur.fetchone()
+
+    if user:
+
+        cur.execute(
+            "UPDATE students SET password=? WHERE email=?",
+            (new_password, email)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/login")
+
+    conn.close()
+
+    return "Email not found."
 
 
 # ---------------- DASHBOARD ---------------- #
