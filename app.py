@@ -129,24 +129,37 @@ def chatbot():
 @app.route("/get_reply", methods=["POST"])
 def get_reply():
 
-    message = request.form["message"].lower()
+    if "user" not in session:
+        return {"reply": "Please login first."}
 
-    replies = {
-        "hello": "Hello Student 👋",
-        "attendance": "Your attendance is 92%.",
-        "result": "Your result is First Class.",
-        "fees": "Semester fees are ₹25,000.",
-        "exam": "Your next exam starts on 20 September.",
-        "assignment": "You have 4 pending assignments.",
-        "notice": "Check the Notice Board for the latest updates.",
-        "bye": "Goodbye! Have a nice day."
-    }
+    message = request.form["message"]
 
-    reply = replies.get(message, "Sorry, I don't understand your question.")
+    prompt = f"""
+You are a helpful College Student Assistant.
 
-    return {"reply": reply}
+Answer only questions related to:
+- College
+- Attendance
+- Results
+- Assignments
+- Notices
+- Exams
+- Programming
+- Python
+- Career Guidance
 
+Student Question:
+{message}
+"""
 
+    try:
+        response = model.generate_content(prompt)
+        return {"reply": response.text}
+
+    except Exception:
+        return {
+            "reply": "Sorry, AI is currently unavailable."
+        }
 # ---------------- ATTENDANCE ---------------- #
 
 @app.route("/attendance")
