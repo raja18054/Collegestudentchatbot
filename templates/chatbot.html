@@ -1,122 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>College AI Chatbot</title>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<title>College AI Assistant</title>
 
-<style>
-.chat-box{
-height:400px;
-border:1px solid #ccc;
-padding:15px;
-overflow-y:auto;
-margin-bottom:15px;
-background:#f8f8f8;
-}
-
-.user{
-text-align:right;
-color:blue;
-margin:10px;
-}
-
-.bot{
-text-align:left;
-color:green;
-margin:10px;
-}
-
-input{
-width:75%;
-padding:10px;
-}
-
-button{
-padding:10px 20px;
-cursor:pointer;
-}
-</style>
-
+<link rel="stylesheet" href="{{ url_for('static', filename='chatbot.css') }}">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
+
 <body>
 
-<div class="container">
+<div class="chat-container">
 
-<h1>🤖 College Student Assistant Chatbot</h1>
+<div class="header">
 
-<div class="chat-box" id="chatBox">
+<div class="avatar">🤖</div>
 
-<div class="bot">
-Hello 👋<br>
-Ask me about:
+<div>
+
+<h2>College AI Assistant</h2>
+
+<p>🟢 Online</p>
+
+</div>
+
+</div>
+
+<div id="chat-box">
+
+<div class="bot message">
+
+Hello 👋<br><br>
+
+I can help you with:
+
 <ul>
+
 <li>Attendance</li>
-<li>Result</li>
-<li>Fees</li>
-<li>Exam</li>
+
+<li>Results</li>
+
+<li>Assignments</li>
+
+<li>Python</li>
+
+<li>Programming</li>
+
+<li>Career Guidance</li>
+
 </ul>
+
 </div>
 
 </div>
+
+<div id="typing" style="display:none">
+
+  AI is typing...
+
+</div>
+
+<div class="input-area">
 
 <input
 type="text"
 id="message"
-placeholder="Type your question..."
+placeholder="Ask anything..."
 >
 
-<button onclick="sendMessage()">Send</button>
+<button id="send">
 
-<br><br>
+➤
 
-<a href="/dashboard">
-<button>⬅ Dashboard</button>
+</button>
+
+</div>
+
+<a href="/dashboard" class="back">
+
+← Dashboard
+
 </a>
 
 </div>
 
-<script>
-
-function sendMessage(){
-
-let message=document.getElementById("message").value;
-
-if(message=="") return;
-
-let chat=document.getElementById("chatBox");
-
-chat.innerHTML += "<div class='user'>"+message+"</div>";
-
-fetch("/get_reply",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/x-www-form-urlencoded"
-},
-
-body:"message="+encodeURIComponent(message)
-
-})
-
-.then(res=>res.json())
-
-.then(data=>{
-
-chat.innerHTML += "<div class='bot'>"+data.reply+"</div>";
-
-document.getElementById("message").value="";
-
-chat.scrollTop=chat.scrollHeight;
-
-});
-
-}
-
-</script>
+<script src="{{ url_for('static', filename='chatbot.js') }}"></script>
 
 </body>
 </html>
