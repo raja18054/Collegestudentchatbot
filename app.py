@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+import os
+import google.generativeai as genai
 
 app = Flask(__name__)
 app.secret_key = "college_chatbot_secret"
