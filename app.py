@@ -187,9 +187,10 @@ Student Question:
     try:
         # Using gemini-2.5-flash with the modern google-genai SDK
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
+         model="gemini-3.5-flash",
+          contents=prompt,
         )
+        
         
         if response and response.text:
             return {"reply": response.text}
