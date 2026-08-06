@@ -185,9 +185,9 @@ Student Question:
 """
 
     try:
-        # Changed to gemini-1.5-flash
+        # Using gemini-2.5-flash with the modern google-genai SDK
         response = client.models.generate_content(
-            model="gemini-1.5-flash",
+            model="gemini-2.5-flash",
             contents=prompt,
         )
         
